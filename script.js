@@ -12,14 +12,29 @@ function playnote(freq)
     {
         audioCtx=new(AudioContext || webkitAudioContext || window.webkitAudioContext)();
     }
+
+    if (!isFinite(freq)) {
+        console.error("Invalid frequency value:", freq);
+        return;
+    }
+
     const dur=0.1;
     const osc=audioCtx.createOscillator();
+
+    if (!isFinite(freq)) {
+        console.error("Invalid frequency value:", freq);
+        return;
+    }
+
     osc.frequency.value=freq;
     osc.start();
     osc.stop(audioCtx.currentTime+dur);
 
     const node=audioCtx.createGain();
+
     node.gain.value=0.1;
+
+    node.gain.linearRampToValueAtTime(0,audioCtx.currentTime+dur);
     osc.connect(node);
 
     node.connect(audioCtx.destination);
@@ -62,7 +77,7 @@ function animate(moves)
     playnote(200+array[j]*500);
    
     ShowBar(move);
-    setTimeout(function(){animate(moves);},200);
+    setTimeout(function(){animate(moves);},100);
 
 
 }
